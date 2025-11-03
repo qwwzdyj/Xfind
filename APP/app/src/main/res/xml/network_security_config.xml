@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- 允许HTTP流量 -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- 允许所有域名 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">xingchen-api.xf-yun.com</domain>
+    </domain-config>
+</network-security-config>
+

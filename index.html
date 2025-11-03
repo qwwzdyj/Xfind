@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperSwipe - 每日论文推荐</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                    <path d="M10 12L16 18L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>PaperSwipe</h1>
+            </div>
+            <a href="library.html" class="saved-count" style="text-decoration: none; cursor: pointer;" title="查看储存库">
+                <span id="savedCount">0</span> 已保存
+            </a>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 搜索区域 -->
+            <div id="searchSection" class="search-section">
+                <div class="search-container">
+                    <h2 class="search-title">发现你的下一篇论文</h2>
+                    <p class="search-subtitle">输入研究方向，获取个性化论文推荐</p>
+                    
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="researchInput" 
+                            class="research-input" 
+                            placeholder="例如：机器学习在医疗诊断中的应用"
+                            autocomplete="off"
+                        >
+                        <button id="searchBtn" class="search-btn">
+                            <span class="btn-text">开始探索</span>
+                            <span class="btn-icon">→</span>
+                        </button>
+                    </div>
+                    
+                    <div class="search-suggestions">
+                        <span class="suggestion-label">热门方向：</span>
+                        <button class="suggestion-tag">深度学习</button>
+                        <button class="suggestion-tag">自然语言处理</button>
+                        <button class="suggestion-tag">计算机视觉</button>
+                        <button class="suggestion-tag">强化学习</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 卡片区域 -->
+            <div id="cardSection" class="card-section hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="cards-container" id="cardsContainer">
+                    <!-- 卡片会动态生成 -->
+                </div>
+                
+                <div class="action-hints">
+                    <div class="hint hint-left">
+                        <div class="hint-icon">←</div>
+                        <span>左滑跳过</span>
+                    </div>
+                    <div class="hint hint-right">
+                        <div class="hint-icon">→</div>
+                        <span>右滑保存</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn discard-btn" id="discardBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn save-btn" id="saveBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 完成界面 -->
+            <div id="completionSection" class="completion-section hidden">
+                <div class="completion-card">
+                    <div class="completion-icon">✨</div>
+                    <h2 class="completion-title">筛选完成！</h2>
+                    <p class="completion-subtitle">你已保存 <span id="finalCount">0</span> 篇论文</p>
+                    
+                    <div class="saved-papers-list" id="savedPapersList">
+                        <!-- 保存的论文列表 -->
+                    </div>
+                    
+                    <div class="completion-actions">
+                        <button class="secondary-btn" id="newSearchBtn">新的搜索</button>
+                        <button class="primary-btn" id="viewSavedBtn">查看储存库</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 加载动画 -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">正在为你寻找最相关的论文...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

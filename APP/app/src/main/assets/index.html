@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PaperSwipe</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-color: #0f0f1e;
+            --surface-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --border-color: #2a2a3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: pan-y;
+        }
+
+        .container {
+            padding: 16px;
+            max-width: 100%;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .saved-count {
+            padding: 8px 16px;
+            background: var(--surface-color);
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .search-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .search-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .research-input {
+            width: 100%;
+            padding: 16px;
+            background: var(--surface-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Card Section */
+        .cards-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 20px 0;
+        }
+
+        .paper-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--surface-color);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .paper-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .paper-authors {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .paper-abstract {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .discard-btn {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+        }
+
+        .save-btn {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>PaperSwipe</h1>
+            </div>
+            <div class="saved-count" onclick="Android.openLibrary()">
+                <span id="savedCount">0</span> 已保存
+            </div>
+        </div>
+
+        <div id="searchSection" class="search-section">
+            <h2 class="search-title">发现你的下一篇论文</h2>
+            <p class="search-subtitle">输入研究方向，获取个性化论文推荐</p>
+            <input type="text" id="researchInput" class="research-input" placeholder="例如：机器学习在医疗诊断中的应用">
+            <button class="search-btn" onclick="handleSearch()">开始探索</button>
+        </div>
+
+        <div id="cardSection" class="hidden">
+            <div class="cards-container" id="cardsContainer"></div>
+            <div class="action-buttons">
+                <button class="action-btn discard-btn" onclick="handleDiscard()">✕</button>
+                <button class="action-btn save-btn" onclick="handleSave()">♥</button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            正在加载论文...
+        </div>
+    </div>
+
+    <script>
+        let papers = [];
+        let currentIndex = 0;
+        let savedPapers = [];
+
+        function handleSearch() {
+            const input = document.getElementById('researchInput').value.trim();
+            if (!input) {
+                alert('请输入研究方向');
+                return;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('searchSection').classList.add('hidden');
+
+            // Call Android method to fetch papers
+            Android.searchPapers(input);
+        }
+
+        function onPapersReceived(papersJson) {
+            document.getElementById('loading').classList.add('hidden');
+            papers = JSON.parse(papersJson);
+            currentIndex = 0;
+            
+            if (papers && papers.length > 0) {
+                document.getElementById('cardSection').classList.remove('hidden');
+                showCurrentCard();
+            } else {
+                alert('未找到相关论文');
+                document.getElementById('searchSection').classList.remove('hidden');
+            }
+        }
+
+        function showCurrentCard() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            if (currentIndex < papers.length) {
+                const paper = papers[currentIndex];
+                const card = document.createElement('div');
+                card.className = 'paper-card';
+                card.innerHTML = `
+                    <h3 class="paper-title">${paper.title}</h3>
+                    <div class="paper-authors">${paper.authors}</div>
+                    <div class="paper-abstract">${paper.abstract}</div>
+                    <div style="margin-top: 12px; font-size: 12px; color: #667eea;">
+                        ${paper.year || ''} ${paper.venue || ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            } else {
+                // All done
+                document.getElementById('cardSection').classList.add('hidden');
+                alert(`完成！已保存 ${savedPapers.length} 篇论文`);
+                Android.savePapers(JSON.stringify(savedPapers));
+                document.getElementById('searchSection').classList.remove('hidden');
+            }
+        }
+
+        function handleDiscard() {
+            currentIndex++;
+            showCurrentCard();
+        }
+
+        function handleSave() {
+            savedPapers.push(papers[currentIndex]);
+            updateSavedCount();
+            currentIndex++;
+            showCurrentCard();
+        }
+
+        function updateSavedCount() {
+            document.getElementById('savedCount').textContent = savedPapers.length;
+        }
+
+        function loadSavedCount() {
+            const count = Android.getSavedCount();
+            document.getElementById('savedCount').textContent = count;
+        }
+
+        // Load saved count on start
+        if (typeof Android !== 'undefined') {
+            loadSavedCount();
+        }
+    </script>
+</body>
+</html>
+

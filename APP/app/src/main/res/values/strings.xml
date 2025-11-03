@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PaperSwipe</string>
+    <string name="search_hint">输入研究方向</string>
+    <string name="search_button">开始探索</string>
+    <string name="saved">已保存</string>
+    <string name="library">我的储存库</string>
+</resources>
