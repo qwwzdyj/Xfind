@@ -154,6 +154,10 @@ Xfind/
 │   ├── TROUBLESHOOTING.md     # 故障排除（Web）
 │   └── TROUBLESHOOTING_ANDROID.md  # 故障排除（Android）
 │
+└── workflow/
+    ├── spark_workflow_config.yml  # 星火工作流配置
+    └── README.md                  # 工作流配置说明
+│
 └── 测试/
     ├── test_api.py            # API测试脚本
     ├── test_parse.py          # JSON解析测试
@@ -161,6 +165,16 @@ Xfind/
 ```
 
 ## 🔧 配置说明
+
+### 工作流配置
+
+如果你需要在星火平台重新创建工作流，可以使用 `workflow/spark_workflow_config.yml`：
+
+1. 导入到星火大模型工作流平台
+2. 替换配置中的占位符（`YOUR_USER_ID`, `YOUR_APP_ID`等）
+3. 获取Flow ID并配置到应用中
+
+详细说明请查看 [workflow/README.md](workflow/README.md)
 
 ### API配置
 
